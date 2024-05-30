@@ -2,62 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Services\PostService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        $posts = Post::all();
-        $message = 'К сожалению статей нет';
+    protected PostService $postService;
 
-        if ($posts->isEmpty()) {
-            return response()->json(['message' => $message]);
-        } else {
-            return response()->json($posts);
-        }
+    public function __construct(PostService $postService)
+    {
+        $this->postService = $postService;
     }
 
-    public function store(Request $request)
+    public function index():JsonResponse
     {
-        $data = $request->json()->all();
-        $posts = Post::create($data);
-        return response()->json($posts);
+        return $this->postService->index();
     }
 
-    public function show($id)
+    public function store(Request $request): JsonResponse
     {
-        $message = 'Статья не найдена';
-        $posts = Post::find($id);
-        if (is_null($posts)) {
-            return response()->json(['message' => $message]);
-        }
-        else {
-            return response()->json($posts);
-        }
+        return $this->postService->store($request);
     }
 
-    public function update(Request $request, $id)
+    public function show($id): JsonResponse
     {
-        $data = $request->json()->all();
-        $posts = Post::find($id);
-        $posts->update($data);
-        return response()->json($posts);
+        return $this->postService->show($id);
     }
 
-    public function destroy(string $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        $message = 'Статья успешно удалена';
-        $message2 = 'Статья не найдена';
-        $posts = Post::find($id);
-        if ($posts) {
-            $posts->delete();
-            return response()->json(['message' => $message]);}
-        else {
-            return response()->json(['message' => $message2]);
-            }
+        return $this->postService->update($request, $id);
+    }
 
-        }
+    public function destroy(string $id): JsonResponse
+    {
+        return $this->postService->destroy($id);
+
+    }
 }
 
