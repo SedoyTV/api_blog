@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class PostService
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $posts = Post::all();
+        $posts = Post::with('categories')->get();
         $message = 'К сожалению статей нет';
 
         if ($posts->isEmpty()) {
@@ -24,14 +24,19 @@ class PostService
     {
         $data = $request->json()->all();
         $posts = Post::create($data);
-        return response()->json($posts);
-    }
 
+        if (isset($data['category_ids'])) {
+            $posts->categories()->sync($data['category_ids']);
+        }
+        return response()->json($posts->load('categories'));
+
+    }
 
     public function show($id): JsonResponse
     {
         $message = 'Статья не найдена';
-        $posts = Post::find($id);
+        $posts = Post::with('categories')->find($id);
+
         if (is_null($posts)) {
             return response()->json(['message' => $message]);
         } else {
@@ -42,9 +47,11 @@ class PostService
     public function update(Request $request, $id): JsonResponse
     {
         $data = $request->json()->all();
-        $posts = Post::find($id);
+        $posts = Post::with('categories')->find($id);
         $posts->update($data);
-        return response()->json($posts);
+        $posts->categories()->sync($data['category_ids']);
+
+        return response()->json($posts->load('categories'));
     }
 
     public function destroy(string $id): JsonResponse
@@ -52,12 +59,12 @@ class PostService
         $message = 'Статья успешно удалена';
         $message2 = 'Статья не найдена';
         $posts = Post::find($id);
+
         if ($posts) {
             $posts->delete();
             return response()->json(['message' => $message]);}
         else {
             return response()->json(['message' => $message2]);
         }
-
     }
 }
