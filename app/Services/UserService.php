@@ -19,7 +19,8 @@ class UserService
             $user = User::create($request->all());
             $token = $user->createToken('Token')->plainTextToken;
 
-            return response()->json(['Token: '.$token]);
+            return response()->json(['token' => $token]);
+
         }
     }
     public function login($request): JsonResponse
@@ -33,7 +34,8 @@ class UserService
             $user = Auth::user();
             $token = $user->createToken('Token')->plainTextToken;
 
-            return response()->json(['Token: '.$token]);
+            return response()->json(['token' => $token]);
+
         }
     }
 }

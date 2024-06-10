@@ -50,9 +50,8 @@ class PostService
     {
         $message = "Вы не являетесь автором этой статьи";
         $data = $request->json()->all();
-        $data['user_id'] = Auth::id();
         $post = Post::with('categories')->where(
-            'user_id', $request->user()->id)->find($id);
+            'user_id', Auth::id())->get()->find($id);
         if (!$post) {
             return response()->json(['message' => $message]);
         }
@@ -78,7 +77,9 @@ class PostService
     public function getUserPosts(Request $request): JsonResponse
     {
         $posts = Post::with('categories')->where(
-            'user_id', $request->user()->id)->get();
+            'user_id', Auth::id())->get();
+
         return response()->json($posts);
     }
 }
+
