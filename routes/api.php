@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,10 +16,16 @@ use App\Http\Controllers\PostController;
 |
 */
 
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('user/register', [UserController::class, 'register'])->name('register');
+Route::post('user/login', [UserController::class, 'login'])->name('login');
+Route::middleware('auth:sanctum')->get('user/posts', [PostController::class, 'getUserPosts']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('posts', PostController::class);
+    Route::apiResource('categories', CategoryController::class);
+});
 
-Route::apiResource('posts', PostController::class);
-Route::apiResource('categories', CategoryController::class);

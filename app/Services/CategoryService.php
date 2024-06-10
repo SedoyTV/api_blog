@@ -7,7 +7,8 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryService
 {
-    public function index(): JsonResponse {
+    public function index(): JsonResponse
+    {
         $categories = Category::all();
         $message = 'Категории не добавлены';
         if ($categories->isEmpty()) {
@@ -16,39 +17,43 @@ class CategoryService
             return response()->json($categories);
         }
     }
-    public function store($request): JsonResponse {
+    public function store($request): JsonResponse
+    {
         $data = $request->json()->all();
-        $categories = Category::create($data);
-        return response()->json($categories);
+        $category = Category::create($data);
+        return response()->json($category);
     }
-    public function show($id): JsonResponse {
-        $categories = Category::find($id);
+    public function show($id): JsonResponse
+    {
+        $category = Category::find($id);
         $message = "Категория с id=$id не найдена";
-        if (!$categories) {
+        if (!$category) {
             return response()->json(['message' => $message]);
         } else {
-            return response()->json($categories);
+            return response()->json($category);
         }
     }
-    public function update($request, $id): JsonResponse {
+    public function update($request, $id): JsonResponse
+    {
         $data = $request->json()->all();
-        $categories = Category::find($id);
+        $category = Category::find($id);
         $message = "Категория с id=$id не найдена";
-        if (!$categories) {
+        if (!$category) {
             return response()->json(['message' => $message]);
         } else {
-            $categories->update($data);
-            return response()->json($categories);
+            $category->update($data);
+            return response()->json($category);
         }
     }
-    public function destroy($id): JsonResponse {
-        $categories = Category::find($id);
-        if (!$categories) {
+    public function destroy($id): JsonResponse
+    {
+        $category = Category::find($id);
+        if (!$category) {
             return response()->json(['message' => 'Категории с id=$id не существует']);
         }
         else {
-            $categories->delete();
-            return response()->json($categories);
+            $category->delete();
+            return response()->json($category);
         }
     }
 }

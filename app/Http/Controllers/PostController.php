@@ -34,5 +34,8 @@ class PostController extends Controller
     {
         return $this->postService->destroy($id);
     }
+    public function getUserPosts(Request $request): JsonResponse {
+        return $this->postService->getUserPosts($request);
+    }
 }
 
